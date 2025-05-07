@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lihat Jadwal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-orange-400 to-orange-700 min-h-screen text-white font-sans">
+
+  <!-- Header -->
+  <header class="text-center py-6">
+    <h1 class="text-2xl sm:text-3xl font-bold">Daftar Jadwal Pemberian Makan</h1>
+    <p class="text-sm sm:text-base mt-2">Lihat semua jadwal pakan yang sudah kamu atur</p>
+  </header>
+
+  <!-- Tabel Jadwal -->
+  <main class="px-4 sm:px-12">
+    <div class="overflow-x-auto bg-white rounded-lg shadow-md text-black">
+      <table class="w-full table-auto border border-black text-sm sm:text-base">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border border-black px-3 py-2">NO.</th>
+            <th class="border border-black px-3 py-2">Hari</th>
+            <th class="border border-black px-3 py-2">Jam</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border border-black text-center py-2">1</td>
+            <td class="border border-black text-center">Senin</td>
+            <td class="border border-black text-center">09.00</td>
+          </tr>
+          <tr>
+            <td class="border border-black text-center py-2">2</td>
+            <td class="border border-black text-center">Selasa</td>
+            <td class="border border-black text-center">10.00</td>
+          </tr>
+          <!-- Tambahkan baris lainnya sesuai data -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tombol Kembali -->
+    <div class="text-center mt-8">
+      <a href="aturjadwal.html" class="inline-block bg-white text-black px-5 py-2 rounded hover:bg-gray-100 transition">
+        Kembali ke Atur Jadwal
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>
+<script>
+  function tampilkanJadwal() {
+    const data = JSON.parse(localStorage.getItem('jadwalData')) || [];
+    const tbody = document.getElementById('jadwalBody');
+    tbody.innerHTML = "";
+
+    data.forEach((item, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="border text-center">${index + 1}</td>
+        <td class="border text-center">${item.hari}</td>
+        <td class="border text-center">${item.jam}</td>
+        <td class="border text-center">
+          <div class="flex justify-center gap-2">
+            <button class="bg-yellow-500 text-white p-2 rounded" onclick="openModal('edit', ${index})"><i class="fas fa-pen"></i></button>
+            <button class="bg-yellow-500 text-white p-2 rounded" onclick="deleteRow(${index})"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", tampilkanJadwal);
+</script>

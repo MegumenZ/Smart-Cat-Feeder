@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atur Jadwal Makanan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="font-sans bg-gradient-to-br from-orange-400 to-orange-900 text-white min-h-screen">
+
+<main class="p-4 sm:p-8 max-w-5xl mx-auto">
+  <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+    <h1 class="text-xl sm:text-2xl font-bold">Atur Makanan</h1>
+    <button onclick="openModal('add')" class="bg-white text-black px-4 py-2 rounded hover:bg-gray-100">Tambah Jadwal</button>
+  </div>
+
+  <!-- Tabel -->
+  <div class="overflow-x-auto bg-white rounded shadow text-black">
+    <table id="jadwalTable" class="w-full table-auto border border-black text-sm sm:text-base">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-2 w-12">NO.</th>
+          <th class="border px-2 py-2">Hari</th>
+          <th class="border px-2 py-2">Jam</th>
+          <th class="border px-2 py-2">Edit Makanan</th>
+        </tr>
+      </thead>
+      <tbody id="jadwalBody">
+        <tr>
+          <td class="border text-center">1</td>
+          <td class="border text-center">Senin</td>
+          <td class="border text-center">09.00</td>
+          <td class="border text-center">
+            <div class="flex justify-center gap-2">
+              <button class="bg-yellow-500 text-white p-2 rounded" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+              <button class="bg-yellow-500 text-white p-2 rounded" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="border text-center">2</td>
+          <td class="border text-center">Selasa</td>
+          <td class="border text-center">10.00</td>
+          <td class="border text-center">
+            <div class="flex justify-center gap-2">
+              <button class="bg-yellow-500 text-white p-2 rounded" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+              <button class="bg-yellow-500 text-white p-2 rounded" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 flex gap-4">
+    <a href="lihatjadwal.html" class="bg-white text-black px-4 py-2 rounded hover:bg-gray-100">Lihat Jadwal</a>
+    <a href="jadwal.html" class="bg-white text-black px-4 py-2 rounded hover:bg-gray-100">Kembali</a>
+  </div>
+</main>
+
+<!-- Modal -->
+<div id="jadwalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white text-black p-6 rounded-lg w-11/12 max-w-md shadow-lg">
+    <h2 id="modalTitle" class="text-xl font-bold mb-4">Tambah Jadwal</h2>
+    <form onsubmit="saveJadwal(event)">
+      <input type="hidden" id="editingIndex">
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Hari</label>
+        <input type="text" id="hariInput" required placeholder="Contoh: Rabu" class="w-full border border-gray-300 px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Jam</label>
+        <input type="time" id="jamInput" required class="w-full border border-gray-300 px-3 py-2 rounded">
+      </div>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeModal()" class="bg-gray-300 px-4 py-2 rounded">Tutup</button>
+        <button type="submit" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  function openModal(mode, row = null) {
+    const modal = document.getElementById('jadwalModal');
+    const title = document.getElementById('modalTitle');
+    const hari = document.getElementById('hariInput');
+    const jam = document.getElementById('jamInput');
+    const indexInput = document.getElementById('editingIndex');
+
+    if (mode === 'add') {
+      title.textContent = 'Tambah Jadwal';
+      hari.value = '';
+      jam.value = '';
+      indexInput.value = '';
+    } else if (mode === 'edit') {
+      title.textContent = 'Edit Jadwal';
+      const cells = row.parentNode.parentNode.parentNode.children;
+      hari.value = cells[1].textContent;
+      jam.value = cells[2].textContent;
+      indexInput.value = Array.from(document.querySelectorAll('#jadwalBody tr')).indexOf(row.parentNode.parentNode.parentNode);
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    document.getElementById('jadwalModal').classList.add('hidden');
+    document.getElementById('jadwalModal').classList.remove('flex');
+  }
+
+  function saveJadwal(e) {
+    e.preventDefault();
+    const hari = document.getElementById('hariInput').value;
+    const jam = document.getElementById('jamInput').value;
+    const index = document.getElementById('editingIndex').value;
+    const tbody = document.getElementById('jadwalBody');
+
+    if (index === '') {
+      const row = document.createElement('tr');
+      const no = tbody.children.length + 1;
+      row.innerHTML = `
+        <td class="border text-center">${no}</td>
+        <td class="border text-center">${hari}</td>
+        <td class="border text-center">${jam}</td>
+        <td class="border text-center">
+          <div class="flex justify-center gap-2">
+            <button class="bg-yellow-500 text-white p-2 rounded" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+            <button class="bg-yellow-500 text-white p-2 rounded" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>`;
+      tbody.appendChild(row);
+    } else {
+      const rows = tbody.querySelectorAll('tr');
+      rows[index].children[1].textContent = hari;
+      rows[index].children[2].textContent = jam;
+    }
+
+    closeModal();
+  }
+
+  function editRow(btn) {
+    openModal('edit', btn);
+  }
+
+  function deleteRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+    // Re-number
+    const rows = document.querySelectorAll('#jadwalBody tr');
+    rows.forEach((r, i) => r.children[0].textContent = i + 1);
+  }
+</script>
+
+</body>
+</html>
